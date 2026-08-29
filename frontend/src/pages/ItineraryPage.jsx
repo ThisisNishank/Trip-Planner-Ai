@@ -26,34 +26,39 @@ function ItineraryPage() {
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+      const fetchData = async () => {
       try {
         const destRes = await api.get(`/destinations/${destinationName}`);
         setDestination(destRes.data);
+      } catch (error) {
+        setErrorMessage('Destination not found. Try Goa, Manali, Jaipur, or another famous place.');
+        setLoading(false);
+        return;
+      }
 
+      try {
         const weatherRes = await api.get(`/destinations/${destinationName}/weather`);
         setWeather(weatherRes.data);
+      } catch {
+        // weather temporarily unavailable — page still works fine without it
+      }
 
       try {
         const searchTerm = getImageSearchTerm(destinationName);
-          const wikiRes = await axios.get(
-            `https://en.wikipedia.org/api/rest_v1/page/summary/${searchTerm}`
-          );
-  if (wikiRes.data.originalimage) {
-    setHeroImage(wikiRes.data.originalimage.source);
-  } else if (wikiRes.data.thumbnail) {
-    setHeroImage(wikiRes.data.thumbnail.source);
-  }
-} catch {
-  // no image found — that's fine, page still works without one
-}
-      } catch (error) {
-        setErrorMessage('Destination not found. Try Goa, Manali, Jaipur, or another famous place.');
-      } finally {
-        setLoading(false);
+        const wikiRes = await axios.get(
+          `https://en.wikipedia.org/api/rest_v1/page/summary/${searchTerm}`
+        );
+        if (wikiRes.data.originalimage) {
+          setHeroImage(wikiRes.data.originalimage.source);
+        } else if (wikiRes.data.thumbnail) {
+          setHeroImage(wikiRes.data.thumbnail.source);
+        }
+      } catch {
+        // no image found — that's fine, page still works without one
       }
-    };
 
+      setLoading(false);
+    };
     fetchData();
   }, [destinationName]);
 
