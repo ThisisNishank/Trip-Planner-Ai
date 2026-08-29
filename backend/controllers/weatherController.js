@@ -1,6 +1,5 @@
-const axios = require('axios');
 const Destination = require('../models/Destination');
-const { getWeatherDescription } = require('../utils/weatherCodes');
+const { getWeather } = require('../utils/weatherService');
 
 const getWeatherByDestination = async (req, res) => {
   try {
@@ -13,23 +12,11 @@ const getWeatherByDestination = async (req, res) => {
     }
 
     const { lat, lng } = destination.coordinates;
-
-    const response = await axios.get('https://api.open-meteo.com/v1/forecast', {
-      params: {
-        latitude: lat,
-        longitude: lng,
-        current: 'temperature_2m,relative_humidity_2m,weather_code',
-        timezone: 'auto',
-      },
-    });
-
-    const current = response.data.current;
+    const weather = await getWeather(destination.name, lat, lng);
 
     res.status(200).json({
       destination: destination.name,
-      temperature: `${current.temperature_2m}°C`,
-      humidity: `${current.relative_humidity_2m}%`,
-      condition: getWeatherDescription(current.weather_code),
+      ...weather,
     });
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong', error: error.message });

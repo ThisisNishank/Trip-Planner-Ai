@@ -1,7 +1,7 @@
-const axios = require('axios');
 const Destination = require('../models/Destination');
-const { getWeatherDescription } = require('../utils/weatherCodes');
+const { getWeather } = require('../utils/weatherService');
 const { generateItinerary } = require('../utils/aiService');
+
 
 const createItinerary = async (req, res) => {
   try {
@@ -19,23 +19,8 @@ const createItinerary = async (req, res) => {
       return res.status(404).json({ message: 'Destination not found' });
     }
 
-    const { lat, lng } = destination.coordinates;
-
-    const weatherResponse = await axios.get('https://api.open-meteo.com/v1/forecast', {
-      params: {
-        latitude: lat,
-        longitude: lng,
-        current: 'temperature_2m,relative_humidity_2m,weather_code',
-        timezone: 'auto',
-      },
-    });
-
-    const current = weatherResponse.data.current;
-    const weather = {
-      temperature: `${current.temperature_2m}°C`,
-      humidity: `${current.relative_humidity_2m}%`,
-      condition: getWeatherDescription(current.weather_code),
-    };
+   const { lat, lng } = destination.coordinates;
+   const weather = await getWeather(destination.name, lat, lng);
 
     const itineraryText = await generateItinerary(destination, weather, days, people, budget);
 
