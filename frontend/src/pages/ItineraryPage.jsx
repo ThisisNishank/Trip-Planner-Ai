@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import api from '../api/axios';
 import ReactMarkdown from 'react-markdown';
@@ -132,7 +132,9 @@ function ItineraryPage() {
           </>
         )}
 
-        <p className="text-gray-700 mb-8 mt-6">{destination.description}</p>
+        <div className="relative bg-gradient-to-br from-blue-50 to-indigo-50 border-l-4 border-blue-500 rounded-r-xl p-5 mb-8 mt-6">
+          <p className="text-gray-700 leading-relaxed italic">"{destination.description}"</p>
+        </div>
 
         {weather && (
           <div className="bg-white rounded-xl shadow-sm p-5 mb-8 flex items-center justify-between">
@@ -149,13 +151,19 @@ function ItineraryPage() {
         <h2 className="text-xl font-semibold text-gray-800 mb-3">Top Attractions</h2>
         <div className="grid sm:grid-cols-2 gap-4 mb-8">
           {destination.attractions.map((attraction) => (
-            <div
+            <Link
               key={attraction.name}
-              className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-150"
+              to={`/attraction?destination=${encodeURIComponent(destination.name)}&name=${encodeURIComponent(attraction.name)}`}
+              className="group bg-white p-4 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 block"
             >
-              <p className="font-medium text-gray-800">{attraction.name}</p>
-              <p className="text-sm text-gray-500">{attraction.description}</p>
-            </div>
+              <p className="font-medium text-gray-800 group-hover:text-blue-600 transition">
+                {attraction.name}
+              </p>
+              <p className="text-sm text-gray-500 mb-2">{attraction.description}</p>
+              <span className="text-xs text-blue-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                Explore this place →
+              </span>
+            </Link>
           ))}
         </div>
 

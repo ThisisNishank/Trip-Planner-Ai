@@ -18,10 +18,11 @@ const destinationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  attractions: [
+    attractions: [
     {
       name: String,
       description: String,
+      detailedInfo: String,
     },
   ],
   nearestAirport: {

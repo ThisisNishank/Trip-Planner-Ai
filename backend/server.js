@@ -5,6 +5,8 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const destinationRoutes = require('./routes/destinationRoutes');
 const itineraryRoutes = require('./routes/itineraryRoutes');
+const attractionRoutes = require('./routes/attractionRoutes');
+
 
 dotenv.config();
 connectDB();
@@ -17,6 +19,9 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/destinations', destinationRoutes);
 app.use('/api/itinerary', itineraryRoutes);
+app.use('/api/attractions', attractionRoutes);
+
+
 
 app.get('/', (req, res) => {
   res.send('AI Travel Planner backend is running!');

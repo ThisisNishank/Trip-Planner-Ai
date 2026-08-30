@@ -5,6 +5,7 @@ import SignupPage from './pages/SignupPage';
 import ItineraryPage from './pages/ItineraryPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import AttractionPage from './pages/AttractionPage';
 
 
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/itinerary" element={<ItineraryPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/attraction" element={<AttractionPage />} />
       </Routes>
     </BrowserRouter>
   );
