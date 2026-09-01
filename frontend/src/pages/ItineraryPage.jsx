@@ -5,8 +5,6 @@ import api from '../api/axios';
 import ReactMarkdown from 'react-markdown';
 import { getImageSearchTerm } from '../utils/destinationImageQueries';
 
-
-
 function ItineraryPage() {
   const [searchParams] = useSearchParams();
   const destinationName = searchParams.get('destination');
@@ -18,6 +16,28 @@ function ItineraryPage() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const [attractionStart, setAttractionStart] = useState(0);
+
+  const attractionImages = {
+    'Baga Beach':
+      'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80',
+
+    'Fort Aguada':
+      'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=800&q=80',
+
+    'Basilica of Bom Jesus':
+      'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=800&q=80',
+
+    'Dudhsagar Falls':
+      'https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=800&q=80',
+
+    'Anjuna Beach':
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+
+    'Fontainhas':
+      'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80',
+  };
+
   const [showPlanner, setShowPlanner] = useState(false);
   const [days, setDays] = useState('');
   const [people, setPeople] = useState('');
@@ -26,44 +46,56 @@ function ItineraryPage() {
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
-      const fetchData = async () => {
+    const fetchData = async () => {
       try {
-        const destRes = await api.get(`/destinations/${destinationName}`);
+        const destRes = await api.get(
+          `/destinations/${destinationName}`
+        );
+
         setDestination(destRes.data);
       } catch (error) {
-        setErrorMessage('Destination not found. Try Goa, Manali, Jaipur, or another famous place.');
+        setErrorMessage(
+          'Destination not found. Try Goa, Manali, Jaipur, or another famous place.'
+        );
         setLoading(false);
         return;
       }
 
       try {
-        const weatherRes = await api.get(`/destinations/${destinationName}/weather`);
+        const weatherRes = await api.get(
+          `/destinations/${destinationName}/weather`
+        );
+
         setWeather(weatherRes.data);
       } catch {
-        // weather temporarily unavailable — page still works fine without it
+        // Weather temporarily unavailable.
       }
 
       try {
         const searchTerm = getImageSearchTerm(destinationName);
+
         const wikiRes = await axios.get(
           `https://en.wikipedia.org/api/rest_v1/page/summary/${searchTerm}`
         );
+
         if (wikiRes.data.originalimage) {
           setHeroImage(wikiRes.data.originalimage.source);
         } else if (wikiRes.data.thumbnail) {
           setHeroImage(wikiRes.data.thumbnail.source);
         }
       } catch {
-        // no image found — that's fine, page still works without one
+        // No image found — page still works.
       }
 
       setLoading(false);
     };
+
     fetchData();
   }, [destinationName]);
 
   const handleGenerateItinerary = async (e) => {
     e.preventDefault();
+
     setGenerating(true);
     setAiItinerary('');
 
@@ -72,12 +104,24 @@ function ItineraryPage() {
     try {
       const response = await api.post(
         '/itinerary',
-        { destinationName, days, people, budget },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          destinationName,
+          days,
+          people,
+          budget,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       setAiItinerary(response.data.itinerary);
     } catch (error) {
-      setAiItinerary('Something went wrong generating your itinerary. Please try again.');
+      setAiItinerary(
+        'Something went wrong generating your itinerary. Please try again.'
+      );
     } finally {
       setGenerating(false);
     }
@@ -86,7 +130,9 @@ function ItineraryPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500 text-lg">Loading destination...</p>
+        <p className="text-gray-500 text-lg">
+          Loading destination...
+        </p>
       </div>
     );
   }
@@ -94,8 +140,11 @@ function ItineraryPage() {
   if (errorMessage) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4">
-        <p className="text-red-500 text-lg mb-4">{errorMessage}</p>
-               <button
+        <p className="text-red-500 text-lg mb-4">
+          {errorMessage}
+        </p>
+
+        <button
           onClick={() => navigate('/')}
           className="text-blue-600 hover:underline"
         >
@@ -106,168 +155,835 @@ function ItineraryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-10 relative">
-            {heroImage && (
-        <div className="relative w-full h-72 sm:h-96 overflow-hidden">
+    <div className="min-h-screen bg-[#f4f7fb] pb-10 relative">
+
+      {/* ================= HERO ================= */}
+
+      {heroImage && (
+        <div className="relative w-full h-[420px] sm:h-[500px] overflow-hidden">
+
           <img
             src={heroImage}
             alt={destination.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-          <div className="absolute bottom-6 left-0 right-0 max-w-3xl mx-auto px-4">
-            <h1 className="text-5xl sm:text-6xl font-extrabold text-white tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
-              {destination.name}
-            </h1>
-            <p className="text-white/95 text-lg font-medium drop-shadow mt-1">{destination.state}</p>
+
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
+
+          <div className="absolute inset-0 flex items-end">
+
+            <div className="w-full max-w-5xl mx-auto px-6 pb-10 sm:pb-14">
+
+              {/* Destination badge */}
+              <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/25 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
+                📍 {destination.state}, India
+              </div>
+
+              {/* Destination name */}
+              <h1 className="text-5xl sm:text-7xl font-extrabold text-white tracking-tight drop-shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
+                {destination.name}
+              </h1>
+
+              {/* Description */}
+              <p className="mt-3 max-w-2xl text-base sm:text-lg text-white/90 leading-relaxed drop-shadow">
+                {destination.description}
+              </p>
+
+              {/* Hero button */}
+              <button
+                onClick={() => {
+                  const token = localStorage.getItem('token');
+
+                  if (!token) {
+                    navigate('/login');
+                  } else {
+                    setShowPlanner(true);
+                  }
+                }}
+                className="mt-6 inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all duration-200"
+              >
+                ✨ Plan my trip
+                <span>→</span>
+              </button>
+
+            </div>
           </div>
         </div>
       )}
 
-      <div className="max-w-3xl mx-auto px-4 pt-10">
+      {/* ================= MAIN CONTENT ================= */}
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10">
+
         {!heroImage && (
           <>
-            <h1 className="text-4xl font-bold text-gray-800 mb-1">{destination.name}</h1>
-            <p className="text-gray-500 mb-6">{destination.state}</p>
+            <h1 className="text-4xl font-bold text-gray-800 mb-1">
+              {destination.name}
+            </h1>
+
+            <p className="text-gray-500 mb-6">
+              {destination.state}
+            </p>
           </>
         )}
 
-        <div className="relative bg-gradient-to-br from-blue-50 to-indigo-50 border-l-4 border-blue-500 rounded-r-xl p-5 mb-8 mt-6">
-          <p className="text-gray-700 leading-relaxed italic">"{destination.description}"</p>
-        </div>
+        <div className="mb-10" />
+
+        {/* ================= WEATHER ================= */}
 
         {weather && (
-          <div className="bg-white rounded-xl shadow-sm p-5 mb-8 flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-400">Current Weather</p>
-              <p className="text-xl font-semibold text-gray-800">
-                {weather.temperature} · {weather.condition}
-              </p>
+          <div className="mb-12">
+
+            <div className="flex items-center justify-between mb-5">
+
+              <div>
+                <p className="text-sm font-semibold text-blue-600 uppercase tracking-wider">
+                  Live conditions
+                </p>
+
+                <h2 className="text-2xl font-bold text-gray-900 mt-1">
+                  Weather in {destination.name}
+                </h2>
+              </div>
+
+              <span className="text-3xl">
+                🌤️
+              </span>
+
             </div>
-            <p className="text-sm text-gray-400">Humidity {weather.humidity}</p>
+
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white shadow-xl">
+
+              <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/10 rounded-full" />
+
+              <div className="absolute -bottom-20 -left-10 w-56 h-56 bg-white/10 rounded-full" />
+
+              <div className="relative p-7 sm:p-8">
+
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+
+                  <div>
+
+                    <p className="text-white/70 text-sm font-medium mb-2">
+                      Current Weather
+                    </p>
+
+                    <div className="flex items-center gap-4">
+
+                      <span className="text-5xl">
+                        🌡️
+                      </span>
+
+                      <div>
+
+                        <p className="text-4xl sm:text-5xl font-bold">
+                          {weather.temperature}
+                        </p>
+
+                        <p className="text-white/80 text-lg mt-1">
+                          {weather.condition}
+                        </p>
+
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div className="bg-white/10 backdrop-blur-md rounded-2xl px-6 py-5 min-w-[160px]">
+
+                    <p className="text-white/60 text-sm mb-1">
+                      Humidity
+                    </p>
+
+                    <p className="text-2xl font-bold">
+                      {weather.humidity}
+                    </p>
+
+                    <p className="text-white/60 text-sm mt-1">
+                      Current level
+                    </p>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        <h2 className="text-xl font-semibold text-gray-800 mb-3">Top Attractions</h2>
-        <div className="grid sm:grid-cols-2 gap-4 mb-8">
-          {destination.attractions.map((attraction) => (
-            <Link
-              key={attraction.name}
-              to={`/attraction?destination=${encodeURIComponent(destination.name)}&name=${encodeURIComponent(attraction.name)}`}
-              className="group bg-white p-4 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 block"
-            >
-              <p className="font-medium text-gray-800 group-hover:text-blue-600 transition">
-                {attraction.name}
+        {/* ================= TOP ATTRACTIONS ================= */}
+
+        <div className="mb-14">
+
+          {/* Heading + arrows */}
+          <div className="flex items-end justify-between mb-7">
+
+            <div>
+
+              <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest">
+                Discover
               </p>
-              <p className="text-sm text-gray-500 mb-2">{attraction.description}</p>
-              <span className="text-xs text-blue-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                Explore this place →
-              </span>
-            </Link>
-          ))}
-        </div>
 
-        <h2 className="text-xl font-semibold text-gray-800 mb-3">Where to Stay</h2>
-        <div className="grid sm:grid-cols-3 gap-4 mb-8">
-          {destination.hotels.map((hotel) => (
-            <div
-              key={hotel.name}
-              className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-150"
-            >
-              <p className="font-medium text-gray-800">{hotel.name}</p>
-              <p className="text-sm text-gray-500">{hotel.priceRange}</p>
-              <p className="text-sm text-gray-400">₹{hotel.pricePerNight}/night</p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-1">
+                Top Attractions
+              </h2>
+
+              <p className="text-gray-500 mt-2">
+                Places you shouldn't miss in {destination.name}
+              </p>
+
             </div>
-          ))}
+
+            {/* Carousel arrows */}
+            <div className="flex gap-2">
+
+              {/* Previous */}
+              <button
+                onClick={() => setAttractionStart(0)}
+                disabled={attractionStart === 0}
+                className="w-10 h-10 rounded-full border border-gray-200 bg-white text-gray-700 flex items-center justify-center shadow-sm hover:bg-blue-600 hover:text-white hover:border-blue-600 transition disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                ←
+              </button>
+
+              {/* Next */}
+              <button
+                onClick={() => setAttractionStart(3)}
+                disabled={
+                  !destination.attractions ||
+                  destination.attractions.length <= 5 ||
+                  attractionStart !== 0
+                }
+                className="w-10 h-10 rounded-full border border-gray-200 bg-white text-gray-700 flex items-center justify-center shadow-sm hover:bg-blue-600 hover:text-white hover:border-blue-600 transition disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                →
+              </button>
+
+            </div>
+          </div>
+
+          {/* Attraction carousel */}
+<div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 sm:p-5">
+
+  {/* Decorative background shapes */}
+  <div className="absolute -top-20 -right-20 w-56 h-56 bg-blue-200/20 rounded-full blur-3xl" />
+  <div className="absolute -bottom-24 -left-20 w-64 h-64 bg-indigo-200/20 rounded-full blur-3xl" />
+
+  <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+
+    {destination.attractions
+      .slice(attractionStart, attractionStart + 5)
+      .map((attraction, index) => (
+
+        <Link
+          key={attraction.name}
+          to={`/attraction?destination=${encodeURIComponent(
+            destination.name
+          )}&name=${encodeURIComponent(
+            attraction.name
+          )}`}
+          className="group relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-sm border border-white shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+        >
+
+          {/* Image */}
+          <div className="relative h-44 overflow-hidden">
+
+            <img
+              src={
+                attractionImages[attraction.name] ||
+                heroImage
+              }
+              alt={attraction.name}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            />
+
+            {/* Image overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+            {/* Number */}
+            <div className="absolute top-3 left-3 w-9 h-9 rounded-xl bg-white/90 backdrop-blur-sm text-blue-600 flex items-center justify-center font-bold text-sm shadow-lg">
+              {String(
+                attractionStart + index + 1
+              ).padStart(2, '0')}
+            </div>
+
+            {/* Explore badge */}
+            <div className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md text-white text-[10px] font-semibold tracking-wide opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              EXPLORE →
+            </div>
+
+          </div>
+
+          {/* Card content */}
+          <div className="p-4">
+
+            {/* Category */}
+            <p className="text-[10px] font-bold tracking-[0.18em] text-blue-600 uppercase mb-2">
+              Must Visit
+            </p>
+
+            {/* Attraction name */}
+            <h3 className="font-bold text-gray-900 leading-snug group-hover:text-blue-600 transition-colors duration-300">
+              {attraction.name}
+            </h3>
+
+            {/* Description */}
+            <p className="text-sm text-gray-500 leading-5 mt-2 line-clamp-2">
+              {attraction.description}
+            </p>
+
+            {/* Bottom link */}
+            <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+
+              <span className="text-xs font-semibold text-gray-400 group-hover:text-blue-600 transition-colors">
+                Discover
+              </span>
+
+              <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white group-hover:translate-x-1 transition-all duration-300">
+                →
+              </span>
+
+            </div>
+
+          </div>
+
+        </Link>
+
+      ))}
+
+  </div>
+
+</div>
+
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-5 grid sm:grid-cols-2 gap-4 text-sm text-gray-600 mb-8">
-          <p><span className="font-medium text-gray-800">Nearest Airport:</span> {destination.nearestAirport}</p>
-          <p><span className="font-medium text-gray-800">Nearest Railway Station:</span> {destination.nearestRailwayStation}</p>
-          <p className="sm:col-span-2"><span className="font-medium text-gray-800">Best Time to Visit:</span> {destination.bestTimeToVisit}</p>
+        {/* ================= WHERE TO STAY ================= */}
+
+        <div className="mb-14 rounded-[2rem] bg-gradient-to-br from-blue-50/70 via-white to-indigo-50/60 p-6 sm:p-8 border border-blue-100/60 shadow-sm">
+
+          {/* Section heading */}
+          <div className="flex items-end justify-between mb-7">
+
+            <div>
+              <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest">
+                Stay
+              </p>
+
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-1">
+                Where to Stay
+              </h2>
+
+              <p className="text-gray-500 mt-2">
+                Comfortable stays for every type of traveler
+              </p>
+            </div>
+
+            <span className="hidden sm:block text-5xl">
+              🏨
+            </span>
+
+          </div>
+
+          {/* Hotel cards */}
+<div className="grid sm:grid-cols-3 gap-5">
+
+  {destination.hotels.map((hotel, index) => (
+
+    <div
+      key={hotel.name}
+      className={`
+        group relative overflow-hidden rounded-3xl
+        border shadow-sm
+        hover:shadow-2xl hover:-translate-y-2
+        transition-all duration-500
+        ${
+          index === 0
+            ? 'bg-gradient-to-br from-emerald-50 via-white to-green-50 border-emerald-100'
+            : index === 1
+            ? 'bg-gradient-to-br from-sky-50 via-white to-blue-50 border-sky-100'
+            : 'bg-gradient-to-br from-violet-50 via-white to-purple-50 border-violet-100'
+        }
+      `}
+    >
+
+      {/* Decorative glow */}
+      <div
+        className={`
+          absolute -top-20 -right-20
+          w-52 h-52 rounded-full
+          blur-2xl opacity-50
+          group-hover:scale-125
+          transition-transform duration-700
+          ${
+            index === 0
+              ? 'bg-emerald-200'
+              : index === 1
+              ? 'bg-sky-200'
+              : 'bg-violet-200'
+          }
+        `}
+      />
+
+      {/* Decorative circle */}
+      <div
+        className={`
+          absolute -top-12 -right-12
+          w-36 h-36 rounded-full
+          opacity-60
+          group-hover:scale-125
+          transition-transform duration-500
+          ${
+            index === 0
+              ? 'bg-emerald-100'
+              : index === 1
+              ? 'bg-sky-100'
+              : 'bg-violet-100'
+          }
+        `}
+      />
+
+      {/* Card content */}
+      <div className="relative p-6">
+
+        {/* Top row */}
+        <div className="flex items-center justify-between mb-7">
+
+          <span
+            className={`
+              text-5xl font-extrabold
+              ${
+                index === 0
+                  ? 'text-emerald-200'
+                  : index === 1
+                  ? 'text-sky-200'
+                  : 'text-violet-200'
+              }
+            `}
+          >
+            0{index + 1}
+          </span>
+
+          <span
+            className={`
+              w-12 h-12 rounded-2xl
+              flex items-center justify-center
+              text-xl shadow-sm
+              group-hover:scale-110
+              group-hover:rotate-3
+              transition-all duration-300
+              ${
+                index === 0
+                  ? 'bg-emerald-100'
+                  : index === 1
+                  ? 'bg-sky-100'
+                  : 'bg-violet-100'
+              }
+            `}
+          >
+            {index === 0
+              ? '💰'
+              : index === 1
+              ? '🏨'
+              : '✨'}
+          </span>
+
         </div>
+
+        {/* Hotel name */}
+        <h3
+          className={`
+            text-xl font-bold
+            text-gray-900
+            leading-snug
+            transition-colors duration-300
+            ${
+              index === 0
+                ? 'group-hover:text-emerald-600'
+                : index === 1
+                ? 'group-hover:text-sky-600'
+                : 'group-hover:text-violet-600'
+            }
+          `}
+        >
+          {hotel.name}
+        </h3>
+
+        {/* Price category */}
+        <div className="mt-4">
+
+          <span
+            className={`
+              inline-flex items-center
+              text-xs font-bold
+              px-3 py-1.5
+              rounded-full
+              ${
+                index === 0
+                  ? 'text-emerald-700 bg-emerald-100'
+                  : index === 1
+                  ? 'text-sky-700 bg-sky-100'
+                  : 'text-violet-700 bg-violet-100'
+              }
+            `}
+          >
+            {hotel.priceRange}
+          </span>
+
+        </div>
+
+        {/* Price */}
+        <div className="mt-6 flex items-baseline gap-2">
+
+          <span className="text-3xl font-extrabold text-gray-900">
+            ₹{hotel.pricePerNight}
+          </span>
+
+          <span className="text-sm text-gray-400">
+            / night
+          </span>
+
+        </div>
+
+        {/* Bottom interaction */}
+        <div className="mt-7 flex items-center justify-between">
+
+          <span
+            className={`
+              text-sm font-semibold
+              text-gray-400
+              transition-colors duration-300
+              ${
+                index === 0
+                  ? 'group-hover:text-emerald-600'
+                  : index === 1
+                  ? 'group-hover:text-sky-600'
+                  : 'group-hover:text-violet-600'
+              }
+            `}
+          >
+            View stay
+          </span>
+
+          <span
+            className={`
+              text-lg
+              group-hover:translate-x-2
+              transition-transform duration-300
+              ${
+                index === 0
+                  ? 'text-emerald-600'
+                  : index === 1
+                  ? 'text-sky-600'
+                  : 'text-violet-600'
+              }
+            `}
+          >
+            →
+          </span>
+
+        </div>
+
+        {/* Animated accent */}
+        <div
+          className={`
+            mt-6 h-1.5
+            w-12 rounded-full
+            group-hover:w-full
+            transition-all duration-700
+            ${
+              index === 0
+                ? 'bg-gradient-to-r from-emerald-400 to-green-500'
+                : index === 1
+                ? 'bg-gradient-to-r from-sky-400 to-blue-500'
+                : 'bg-gradient-to-r from-violet-400 to-purple-500'
+            }
+          `}
+        />
+
       </div>
 
-      {/* Floating AI button */}
-            <button
-        onClick={() => {
-          const token = localStorage.getItem('token');
-          if (!token) {
-            navigate('/login');
-          } else {
-            setShowPlanner(true);
-          }
-        }}
-        className="fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-4 rounded-full shadow-lg hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-150"
-      >
-        ✨ Plan with AI
-      </button>
+    </div>
 
-      {/* AI planner panel */}
-            {showPlanner && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 z-50">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-2xl max-h-[88vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">✨ Your AI Trip Plan</h2>
-              
-              <button
-                onClick={() => setShowPlanner(false)}
-                className="text-gray-400 hover:text-gray-700 transition"
-              >
-                ✕
-              </button>
+  ))}
+
+</div>
+        </div>
+
+        {/* ================= TRAVEL INFORMATION ================= */}
+
+        <div className="mb-14">
+
+          {/* Section heading */}
+          <div className="flex items-end justify-between mb-7">
+
+            <div>
+              <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest">
+                Travel Guide
+              </p>
+
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-1">
+                Plan Your Visit
+              </h2>
+
+              <p className="text-gray-500 mt-2">
+                Everything you need to know before visiting {destination.name}
+              </p>
             </div>
 
-            {!aiItinerary && (
-              <form onSubmit={handleGenerateItinerary}>
-                <label className="block text-sm text-gray-600 mb-1">Number of days</label>
-                <input
-                  type="number"
-                  value={days}
-                  onChange={(e) => setDays(e.target.value)}
-                  required
-                  min="1"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                />
+            <span className="hidden sm:block text-5xl">
+              🧭
+            </span>
 
-                <label className="block text-sm text-gray-600 mb-1">Number of people</label>
-                <input
-                  type="number"
-                  value={people}
-                  onChange={(e) => setPeople(e.target.value)}
-                  required
-                  min="1"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                />
+          </div>
 
-                <label className="block text-sm text-gray-600 mb-1">Total budget (₹)</label>
-                <input
-                  type="number"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
-                  required
-                  min="1"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-5 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                />
+          {/* Information cards */}
+          <div className="grid sm:grid-cols-3 gap-5">
+
+            {/* Airport */}
+            <div className="group relative overflow-hidden bg-gradient-to-br from-sky-50 via-white to-white rounded-3xl p-6 border border-sky-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+
+              {/* Decorative circle */}
+              <div className="absolute -top-12 -right-12 w-32 h-32 bg-sky-100 rounded-full group-hover:scale-125 transition-transform duration-500" />
+
+              <div className="relative">
+
+                {/* Icon + badge */}
+                <div className="flex items-center justify-between mb-6">
+
+                  <span className="text-4xl group-hover:scale-110 transition-transform duration-300">
+                    ✈️
+                  </span>
+
+                  <span className="text-xs font-bold tracking-wider text-sky-600 bg-sky-100 px-3 py-1.5 rounded-full">
+                    AIRPORT
+                  </span>
+
+                </div>
+
+                <p className="text-sm text-gray-500 mb-2">
+                  Nearest Airport
+                </p>
+
+                <h3 className="text-xl font-bold text-gray-900 leading-snug">
+                  {destination.nearestAirport}
+                </h3>
+
+                <div className="mt-6 flex items-center text-sm font-semibold text-sky-600">
+                  Getting there
+                  <span className="ml-2 group-hover:translate-x-1 transition-transform">
+                    →
+                  </span>
+                </div>
+
+                <div className="mt-5 h-1 w-10 bg-sky-500 rounded-full group-hover:w-full transition-all duration-500" />
+
+              </div>
+
+            </div>
+
+            {/* Railway */}
+            <div className="group relative overflow-hidden bg-gradient-to-br from-violet-50 via-white to-white rounded-3xl p-6 border border-violet-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+
+              {/* Decorative circle */}
+              <div className="absolute -top-12 -right-12 w-32 h-32 bg-violet-100 rounded-full group-hover:scale-125 transition-transform duration-500" />
+
+              <div className="relative">
+
+                {/* Icon + badge */}
+                <div className="flex items-center justify-between mb-6">
+
+                  <span className="text-4xl group-hover:scale-110 transition-transform duration-300">
+                    🚆
+                  </span>
+
+                  <span className="text-xs font-bold tracking-wider text-violet-600 bg-violet-100 px-3 py-1.5 rounded-full">
+                    RAILWAY
+                  </span>
+
+                </div>
+
+                <p className="text-sm text-gray-500 mb-2">
+                  Nearest Railway Station
+                </p>
+
+                <h3 className="text-xl font-bold text-gray-900 leading-snug">
+                  {destination.nearestRailwayStation}
+                </h3>
+
+                <div className="mt-6 flex items-center text-sm font-semibold text-violet-600">
+                  Getting there
+                  <span className="ml-2 group-hover:translate-x-1 transition-transform">
+                    →
+                  </span>
+                </div>
+
+                <div className="mt-5 h-1 w-10 bg-violet-500 rounded-full group-hover:w-full transition-all duration-500" />
+
+              </div>
+
+            </div>
+
+            {/* Best Time */}
+            <div className="group relative overflow-hidden bg-gradient-to-br from-amber-50 via-white to-white rounded-3xl p-6 border border-amber-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+
+              {/* Decorative circle */}
+              <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-100 rounded-full group-hover:scale-125 transition-transform duration-500" />
+
+              <div className="relative">
+
+                {/* Icon + badge */}
+                <div className="flex items-center justify-between mb-6">
+
+                  <span className="text-4xl group-hover:scale-110 transition-transform duration-300">
+                    🌤️
+                  </span>
+
+                  <span className="text-xs font-bold tracking-wider text-amber-600 bg-amber-100 px-3 py-1.5 rounded-full">
+                    BEST TIME
+                  </span>
+
+                </div>
+
+                <p className="text-sm text-gray-500 mb-2">
+                  Best Time to Visit
+                </p>
+
+                <h3 className="text-xl font-bold text-gray-900 leading-snug">
+                  {destination.bestTimeToVisit}
+                </h3>
+
+                <div className="mt-6 flex items-center text-sm font-semibold text-amber-600">
+                  Plan accordingly
+                  <span className="ml-2 group-hover:translate-x-1 transition-transform">
+                    →
+                  </span>
+                </div>
+
+                <div className="mt-5 h-1 w-10 bg-amber-500 rounded-full group-hover:w-full transition-all duration-500" />
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* ================= FLOATING AI BUTTON ================= */}
+
+        <button
+          onClick={() => {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+              navigate('/login');
+            } else {
+              setShowPlanner(true);
+            }
+          }}
+          className="fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-4 rounded-full shadow-lg hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-150 z-40"
+        >
+          ✨ Plan with AI
+        </button>
+
+        {/* ================= AI PLANNER ================= */}
+
+        {showPlanner && (
+
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 z-50">
+
+            <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-2xl max-h-[88vh] overflow-y-auto">
+
+              <div className="flex justify-between items-center mb-6">
+
+                <h2 className="text-2xl font-bold text-gray-800">
+                  ✨ Your AI Trip Plan
+                </h2>
 
                 <button
-                  type="submit"
-                  disabled={generating}
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50"
+                  onClick={() => setShowPlanner(false)}
+                  className="text-gray-400 hover:text-gray-700 transition"
                 >
-                  {generating ? 'Generating your plan...' : 'Generate Itinerary'}
+                  ✕
                 </button>
-              </form>
-            )}
+
+              </div>
+
+              {!aiItinerary && (
+
+                <form onSubmit={handleGenerateItinerary}>
+
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Number of days
+                  </label>
+
+                  <input
+                    type="number"
+                    value={days}
+                    onChange={(e) => setDays(e.target.value)}
+                    required
+                    min="1"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                  />
+
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Number of people
+                  </label>
+
+                  <input
+                    type="number"
+                    value={people}
+                    onChange={(e) => setPeople(e.target.value)}
+                    required
+                    min="1"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                  />
+
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Total budget (₹)
+                  </label>
+
+                  <input
+                    type="number"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                    required
+                    min="1"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-5 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                  />
+
+                  <button
+                    type="submit"
+                    disabled={generating}
+                    className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50"
+                  >
+                    {generating
+                      ? 'Generating your plan...'
+                      : 'Generate Itinerary'}
+                  </button>
+
+                </form>
+
+              )}
 
               {aiItinerary && (
-              <div className="prose prose-sm sm:prose-base prose-headings:text-blue-700 prose-strong:text-gray-800 max-w-none">
-                <ReactMarkdown>{aiItinerary}</ReactMarkdown>
-              </div>
-            )}
+
+                <div className="prose prose-sm sm:prose-base prose-headings:text-blue-700 prose-strong:text-gray-800 max-w-none">
+
+                  <ReactMarkdown>
+                    {aiItinerary}
+                  </ReactMarkdown>
+
+                </div>
+
+              )}
+
+            </div>
           </div>
-        </div>
-      )}
+
+        )}
+
+      </div>
     </div>
   );
 }
