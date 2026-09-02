@@ -6,6 +6,7 @@ import ItineraryPage from './pages/ItineraryPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import AttractionPage from './pages/AttractionPage';
+import ExplorePage from './pages/ExplorePage';
 
 
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/attraction" element={<AttractionPage />} />
+        <Route path="/explore" element={<ExplorePage />} />
       </Routes>
     </BrowserRouter>
   );
