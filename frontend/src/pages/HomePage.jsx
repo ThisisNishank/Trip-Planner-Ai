@@ -467,7 +467,7 @@ function HomePage() {
         onClick={nextExplorePage}
         className="rounded-full border border-white bg-white/70 px-5 py-3 text-sm font-bold text-[#07184a] shadow-sm backdrop-blur transition hover:bg-white hover:scale-105"
       >
-        View all →
+        Next →
       </button>
 
     </div>
