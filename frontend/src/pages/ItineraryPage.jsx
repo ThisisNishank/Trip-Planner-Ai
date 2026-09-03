@@ -16,6 +16,7 @@ function ItineraryPage() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
+  // ================= TOP ATTRACTIONS =================
   const [attractionStart, setAttractionStart] = useState(0);
 
   const attractionImages = {
@@ -34,9 +35,11 @@ function ItineraryPage() {
     'Anjuna Beach':
       'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
 
-    'Fontainhas':
+    Fontainhas:
       'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80',
   };
+
+  // ================= AI PLANNER =================
 
   const [showPlanner, setShowPlanner] = useState(false);
   const [days, setDays] = useState('');
@@ -45,11 +48,13 @@ function ItineraryPage() {
   const [aiItinerary, setAiItinerary] = useState('');
   const [generating, setGenerating] = useState(false);
 
+  // ================= FETCH DATA =================
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const destRes = await api.get(
-          `/destinations/${destinationName}`
+          `/destinations/${encodeURIComponent(destinationName)}`
         );
 
         setDestination(destRes.data);
@@ -57,13 +62,14 @@ function ItineraryPage() {
         setErrorMessage(
           'Destination not found. Try Goa, Manali, Jaipur, or another famous place.'
         );
+
         setLoading(false);
         return;
       }
 
       try {
         const weatherRes = await api.get(
-          `/destinations/${destinationName}/weather`
+          `/destinations/${encodeURIComponent(destinationName)}/weather`
         );
 
         setWeather(weatherRes.data);
@@ -92,6 +98,8 @@ function ItineraryPage() {
 
     fetchData();
   }, [destinationName]);
+
+  // ================= GENERATE ITINERARY =================
 
   const handleGenerateItinerary = async (e) => {
     e.preventDefault();
@@ -127,6 +135,8 @@ function ItineraryPage() {
     }
   };
 
+  // ================= LOADING =================
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -136,6 +146,8 @@ function ItineraryPage() {
       </div>
     );
   }
+
+  // ================= ERROR =================
 
   if (errorMessage) {
     return (
@@ -157,7 +169,9 @@ function ItineraryPage() {
   return (
     <div className="min-h-screen bg-[#f4f7fb] pb-10 relative">
 
-      {/* ================= HERO ================= */}
+      {/* =====================================================
+          HERO
+      ====================================================== */}
 
       {heroImage && (
         <div className="relative w-full h-[420px] sm:h-[500px] overflow-hidden">
@@ -174,22 +188,18 @@ function ItineraryPage() {
 
             <div className="w-full max-w-5xl mx-auto px-6 pb-10 sm:pb-14">
 
-              {/* Destination badge */}
               <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/25 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
                 📍 {destination.state}, India
               </div>
 
-              {/* Destination name */}
               <h1 className="text-5xl sm:text-7xl font-extrabold text-white tracking-tight drop-shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
                 {destination.name}
               </h1>
 
-              {/* Description */}
               <p className="mt-3 max-w-2xl text-base sm:text-lg text-white/90 leading-relaxed drop-shadow">
                 {destination.description}
               </p>
 
-              {/* Hero button */}
               <button
                 onClick={() => {
                   const token = localStorage.getItem('token');
@@ -211,7 +221,9 @@ function ItineraryPage() {
         </div>
       )}
 
-      {/* ================= MAIN CONTENT ================= */}
+      {/* =====================================================
+          MAIN CONTENT
+      ====================================================== */}
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10">
 
@@ -229,7 +241,9 @@ function ItineraryPage() {
 
         <div className="mb-10" />
 
-        {/* ================= WEATHER ================= */}
+        {/* =====================================================
+            WEATHER
+        ====================================================== */}
 
         {weather && (
           <div className="mb-12">
@@ -311,160 +325,357 @@ function ItineraryPage() {
           </div>
         )}
 
-        {/* ================= TOP ATTRACTIONS ================= */}
+        {/* =====================================================
+            TOP ATTRACTIONS
+        ====================================================== */}
 
         <div className="mb-14">
 
-          {/* Heading + arrows */}
-          <div className="flex items-end justify-between mb-7">
+          {/* Heading */}
 
-            <div>
+          <div className="mb-7">
 
-              <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest">
-                Discover
-              </p>
+            <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest">
+              Discover
+            </p>
 
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-1">
-                Top Attractions
-              </h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-1">
+              Top Attractions
+            </h2>
 
-              <p className="text-gray-500 mt-2">
-                Places you shouldn't miss in {destination.name}
-              </p>
+            <p className="text-gray-500 mt-2">
+              Places you shouldn't miss in {destination.name}
+            </p>
 
-            </div>
+          </div>
 
-            {/* Carousel arrows */}
-            <div className="flex gap-2">
+          {/* =================================================
+              ATTRACTION CAROUSEL
+          ================================================== */}
 
-              {/* Previous */}
+          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-5 sm:p-7">
+
+            {/* Decorative background */}
+
+            <div className="absolute -top-20 -right-20 w-56 h-56 bg-blue-200/20 rounded-full blur-3xl" />
+
+            <div className="absolute -bottom-24 -left-20 w-64 h-64 bg-indigo-200/20 rounded-full blur-3xl" />
+
+            {/* Cards wrapper */}
+
+            <div className="relative">
+
+              {/* ================= PREVIOUS BUTTON ================= */}
+
               <button
                 onClick={() => setAttractionStart(0)}
                 disabled={attractionStart === 0}
-                className="w-10 h-10 rounded-full border border-gray-200 bg-white text-gray-700 flex items-center justify-center shadow-sm hover:bg-blue-600 hover:text-white hover:border-blue-600 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                aria-label="Previous attractions"
+                className="
+                  absolute
+                  left-0
+                  top-1/2
+                  -translate-y-1/2
+                  -translate-x-1/2
+                  z-20
+
+                  w-14
+                  h-14
+
+                  rounded-full
+
+                  bg-white
+                  border-2
+                  border-blue-200
+
+                  text-blue-600
+                  text-3xl
+
+                  flex
+                  items-center
+                  justify-center
+
+                  shadow-xl
+
+                  hover:bg-blue-600
+                  hover:text-white
+                  hover:border-blue-600
+                  hover:scale-110
+
+                  transition-all
+                  duration-200
+
+                  disabled:opacity-0
+                  disabled:pointer-events-none
+                "
               >
                 ←
               </button>
 
-              {/* Next */}
+              {/* ================= FOUR CARDS ================= */}
+
+              <div
+                className="
+                  grid
+                  grid-cols-1
+                  sm:grid-cols-2
+                  lg:grid-cols-4
+                  gap-5
+                "
+              >
+
+                {destination.attractions
+                  ?.slice(attractionStart, attractionStart + 4)
+                  .map((attraction, index) => (
+
+                    <Link
+                      key={attraction.name}
+                      to={`/attraction?destination=${encodeURIComponent(
+                        destination.name
+                      )}&name=${encodeURIComponent(
+                        attraction.name
+                      )}`}
+                      className="
+                        group
+                        relative
+                        overflow-hidden
+                        rounded-3xl
+                        bg-white
+                        border
+                        border-white
+                        shadow-md
+                        hover:shadow-2xl
+                        hover:-translate-y-2
+                        transition-all
+                        duration-300
+                      "
+                    >
+
+                      {/* Image */}
+
+                      <div className="relative h-48 overflow-hidden">
+
+                        <img
+                          src={
+                            attractionImages[attraction.name] ||
+                            heroImage
+                          }
+                          alt={attraction.name}
+                          className="
+                            w-full
+                            h-full
+                            object-cover
+                            group-hover:scale-110
+                            transition-transform
+                            duration-700
+                          "
+                        />
+
+                        {/* Overlay */}
+
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+                        {/* Number */}
+
+                        <div className="
+                          absolute
+                          top-3
+                          left-3
+                          w-10
+                          h-10
+                          rounded-xl
+                          bg-white/90
+                          backdrop-blur-sm
+                          text-blue-600
+                          flex
+                          items-center
+                          justify-center
+                          font-bold
+                          text-sm
+                          shadow-lg
+                        ">
+                          {String(
+                            attractionStart + index + 1
+                          ).padStart(2, '0')}
+                        </div>
+
+                        {/* Explore */}
+
+                        <div className="
+                          absolute
+                          bottom-3
+                          right-3
+                          px-3
+                          py-1.5
+                          rounded-full
+                          bg-black/40
+                          backdrop-blur-md
+                          text-white
+                          text-[10px]
+                          font-semibold
+                          tracking-wide
+                          opacity-0
+                          group-hover:opacity-100
+                          transition-opacity
+                          duration-300
+                        ">
+                          EXPLORE →
+                        </div>
+
+                      </div>
+
+                      {/* Card content */}
+
+                      <div className="p-5">
+
+                        <p className="
+                          text-[10px]
+                          font-bold
+                          tracking-[0.18em]
+                          text-blue-600
+                          uppercase
+                          mb-2
+                        ">
+                          Must Visit
+                        </p>
+
+                        <h3 className="
+                          text-lg
+                          font-bold
+                          text-gray-900
+                          leading-snug
+                          group-hover:text-blue-600
+                          transition-colors
+                          duration-300
+                        ">
+                          {attraction.name}
+                        </h3>
+
+                        <p className="
+                          text-sm
+                          text-gray-500
+                          leading-5
+                          mt-2
+                          line-clamp-2
+                        ">
+                          {attraction.description}
+                        </p>
+
+                        <div className="
+                          flex
+                          items-center
+                          justify-between
+                          mt-5
+                          pt-3
+                          border-t
+                          border-gray-100
+                        ">
+
+                          <span className="
+                            text-xs
+                            font-semibold
+                            text-gray-400
+                            group-hover:text-blue-600
+                            transition-colors
+                          ">
+                            Discover
+                          </span>
+
+                          <span className="
+                            w-8
+                            h-8
+                            rounded-full
+                            bg-blue-50
+                            text-blue-600
+                            flex
+                            items-center
+                            justify-center
+                            group-hover:bg-blue-600
+                            group-hover:text-white
+                            group-hover:translate-x-1
+                            transition-all
+                            duration-300
+                          ">
+                            →
+                          </span>
+
+                        </div>
+
+                      </div>
+
+                    </Link>
+
+                  ))}
+
+              </div>
+
+              {/* ================= NEXT BUTTON ================= */}
+
               <button
-                onClick={() => setAttractionStart(3)}
+                onClick={() => setAttractionStart(4)}
                 disabled={
                   !destination.attractions ||
-                  destination.attractions.length <= 5 ||
-                  attractionStart !== 0
+                  destination.attractions.length <= 4 ||
+                  attractionStart === 4
                 }
-                className="w-10 h-10 rounded-full border border-gray-200 bg-white text-gray-700 flex items-center justify-center shadow-sm hover:bg-blue-600 hover:text-white hover:border-blue-600 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                aria-label="Next attractions"
+                className="
+                  absolute
+                  right-0
+                  top-1/2
+                  -translate-y-1/2
+                  translate-x-1/2
+                  z-20
+
+                  w-14
+                  h-14
+
+                  rounded-full
+
+                  bg-white
+                  border-2
+                  border-blue-200
+
+                  text-blue-600
+                  text-3xl
+
+                  flex
+                  items-center
+                  justify-center
+
+                  shadow-xl
+
+                  hover:bg-blue-600
+                  hover:text-white
+                  hover:border-blue-600
+                  hover:scale-110
+
+                  transition-all
+                  duration-200
+
+                  disabled:opacity-0
+                  disabled:pointer-events-none
+                "
               >
                 →
               </button>
 
             </div>
-          </div>
-
-          {/* Attraction carousel */}
-<div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 sm:p-5">
-
-  {/* Decorative background shapes */}
-  <div className="absolute -top-20 -right-20 w-56 h-56 bg-blue-200/20 rounded-full blur-3xl" />
-  <div className="absolute -bottom-24 -left-20 w-64 h-64 bg-indigo-200/20 rounded-full blur-3xl" />
-
-  <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-
-    {destination.attractions
-      .slice(attractionStart, attractionStart + 5)
-      .map((attraction, index) => (
-
-        <Link
-          key={attraction.name}
-          to={`/attraction?destination=${encodeURIComponent(
-            destination.name
-          )}&name=${encodeURIComponent(
-            attraction.name
-          )}`}
-          className="group relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-sm border border-white shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
-        >
-
-          {/* Image */}
-          <div className="relative h-44 overflow-hidden">
-
-            <img
-              src={
-                attractionImages[attraction.name] ||
-                heroImage
-              }
-              alt={attraction.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-            />
-
-            {/* Image overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-
-            {/* Number */}
-            <div className="absolute top-3 left-3 w-9 h-9 rounded-xl bg-white/90 backdrop-blur-sm text-blue-600 flex items-center justify-center font-bold text-sm shadow-lg">
-              {String(
-                attractionStart + index + 1
-              ).padStart(2, '0')}
-            </div>
-
-            {/* Explore badge */}
-            <div className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md text-white text-[10px] font-semibold tracking-wide opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              EXPLORE →
-            </div>
 
           </div>
-
-          {/* Card content */}
-          <div className="p-4">
-
-            {/* Category */}
-            <p className="text-[10px] font-bold tracking-[0.18em] text-blue-600 uppercase mb-2">
-              Must Visit
-            </p>
-
-            {/* Attraction name */}
-            <h3 className="font-bold text-gray-900 leading-snug group-hover:text-blue-600 transition-colors duration-300">
-              {attraction.name}
-            </h3>
-
-            {/* Description */}
-            <p className="text-sm text-gray-500 leading-5 mt-2 line-clamp-2">
-              {attraction.description}
-            </p>
-
-            {/* Bottom link */}
-            <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
-
-              <span className="text-xs font-semibold text-gray-400 group-hover:text-blue-600 transition-colors">
-                Discover
-              </span>
-
-              <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white group-hover:translate-x-1 transition-all duration-300">
-                →
-              </span>
-
-            </div>
-
-          </div>
-
-        </Link>
-
-      ))}
-
-  </div>
-
-</div>
 
         </div>
 
-        {/* ================= WHERE TO STAY ================= */}
+        {/* =====================================================
+            WHERE TO STAY
+        ====================================================== */}
 
         <div className="mb-14 rounded-[2rem] bg-gradient-to-br from-blue-50/70 via-white to-indigo-50/60 p-6 sm:p-8 border border-blue-100/60 shadow-sm">
 
-          {/* Section heading */}
           <div className="flex items-end justify-between mb-7">
 
             <div>
+
               <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest">
                 Stay
               </p>
@@ -476,6 +687,7 @@ function ItineraryPage() {
               <p className="text-gray-500 mt-2">
                 Comfortable stays for every type of traveler
               </p>
+
             </div>
 
             <span className="hidden sm:block text-5xl">
@@ -484,239 +696,266 @@ function ItineraryPage() {
 
           </div>
 
-          {/* Hotel cards */}
-<div className="grid sm:grid-cols-3 gap-5">
+          <div className="grid sm:grid-cols-3 gap-5">
 
-  {destination.hotels.map((hotel, index) => (
+            {destination.hotels.map((hotel, index) => (
 
-    <div
-      key={hotel.name}
-      className={`
-        group relative overflow-hidden rounded-3xl
-        border shadow-sm
-        hover:shadow-2xl hover:-translate-y-2
-        transition-all duration-500
-        ${
-          index === 0
-            ? 'bg-gradient-to-br from-emerald-50 via-white to-green-50 border-emerald-100'
-            : index === 1
-            ? 'bg-gradient-to-br from-sky-50 via-white to-blue-50 border-sky-100'
-            : 'bg-gradient-to-br from-violet-50 via-white to-purple-50 border-violet-100'
-        }
-      `}
-    >
+              <div
+                key={hotel.name}
+                className={`
+                  group
+                  relative
+                  overflow-hidden
+                  rounded-3xl
+                  border
+                  shadow-sm
+                  hover:shadow-2xl
+                  hover:-translate-y-2
+                  transition-all
+                  duration-500
+                  ${
+                    index === 0
+                      ? 'bg-gradient-to-br from-emerald-50 via-white to-green-50 border-emerald-100'
+                      : index === 1
+                      ? 'bg-gradient-to-br from-sky-50 via-white to-blue-50 border-sky-100'
+                      : 'bg-gradient-to-br from-violet-50 via-white to-purple-50 border-violet-100'
+                  }
+                `}
+              >
 
-      {/* Decorative glow */}
-      <div
-        className={`
-          absolute -top-20 -right-20
-          w-52 h-52 rounded-full
-          blur-2xl opacity-50
-          group-hover:scale-125
-          transition-transform duration-700
-          ${
-            index === 0
-              ? 'bg-emerald-200'
-              : index === 1
-              ? 'bg-sky-200'
-              : 'bg-violet-200'
-          }
-        `}
-      />
+                <div
+                  className={`
+                    absolute
+                    -top-20
+                    -right-20
+                    w-52
+                    h-52
+                    rounded-full
+                    blur-2xl
+                    opacity-50
+                    group-hover:scale-125
+                    transition-transform
+                    duration-700
+                    ${
+                      index === 0
+                        ? 'bg-emerald-200'
+                        : index === 1
+                        ? 'bg-sky-200'
+                        : 'bg-violet-200'
+                    }
+                  `}
+                />
 
-      {/* Decorative circle */}
-      <div
-        className={`
-          absolute -top-12 -right-12
-          w-36 h-36 rounded-full
-          opacity-60
-          group-hover:scale-125
-          transition-transform duration-500
-          ${
-            index === 0
-              ? 'bg-emerald-100'
-              : index === 1
-              ? 'bg-sky-100'
-              : 'bg-violet-100'
-          }
-        `}
-      />
+                <div
+                  className={`
+                    absolute
+                    -top-12
+                    -right-12
+                    w-36
+                    h-36
+                    rounded-full
+                    opacity-60
+                    group-hover:scale-125
+                    transition-transform
+                    duration-500
+                    ${
+                      index === 0
+                        ? 'bg-emerald-100'
+                        : index === 1
+                        ? 'bg-sky-100'
+                        : 'bg-violet-100'
+                    }
+                  `}
+                />
 
-      {/* Card content */}
-      <div className="relative p-6">
+                <div className="relative p-6">
 
-        {/* Top row */}
-        <div className="flex items-center justify-between mb-7">
+                  <div className="flex items-center justify-between mb-7">
 
-          <span
-            className={`
-              text-5xl font-extrabold
-              ${
-                index === 0
-                  ? 'text-emerald-200'
-                  : index === 1
-                  ? 'text-sky-200'
-                  : 'text-violet-200'
-              }
-            `}
-          >
-            0{index + 1}
-          </span>
+                    <span
+                      className={`
+                        text-5xl
+                        font-extrabold
+                        ${
+                          index === 0
+                            ? 'text-emerald-200'
+                            : index === 1
+                            ? 'text-sky-200'
+                            : 'text-violet-200'
+                        }
+                      `}
+                    >
+                      0{index + 1}
+                    </span>
 
-          <span
-            className={`
-              w-12 h-12 rounded-2xl
-              flex items-center justify-center
-              text-xl shadow-sm
-              group-hover:scale-110
-              group-hover:rotate-3
-              transition-all duration-300
-              ${
-                index === 0
-                  ? 'bg-emerald-100'
-                  : index === 1
-                  ? 'bg-sky-100'
-                  : 'bg-violet-100'
-              }
-            `}
-          >
-            {index === 0
-              ? '💰'
-              : index === 1
-              ? '🏨'
-              : '✨'}
-          </span>
+                    <span
+                      className={`
+                        w-12
+                        h-12
+                        rounded-2xl
+                        flex
+                        items-center
+                        justify-center
+                        text-xl
+                        shadow-sm
+                        group-hover:scale-110
+                        group-hover:rotate-3
+                        transition-all
+                        duration-300
+                        ${
+                          index === 0
+                            ? 'bg-emerald-100'
+                            : index === 1
+                            ? 'bg-sky-100'
+                            : 'bg-violet-100'
+                        }
+                      `}
+                    >
+                      {index === 0
+                        ? '💰'
+                        : index === 1
+                        ? '🏨'
+                        : '✨'}
+                    </span>
 
+                  </div>
+
+                  <h3
+                    className={`
+                      text-xl
+                      font-bold
+                      text-gray-900
+                      leading-snug
+                      transition-colors
+                      duration-300
+                      ${
+                        index === 0
+                          ? 'group-hover:text-emerald-600'
+                          : index === 1
+                          ? 'group-hover:text-sky-600'
+                          : 'group-hover:text-violet-600'
+                      }
+                    `}
+                  >
+                    {hotel.name}
+                  </h3>
+
+                  <div className="mt-4">
+
+                    <span
+                      className={`
+                        inline-flex
+                        items-center
+                        text-xs
+                        font-bold
+                        px-3
+                        py-1.5
+                        rounded-full
+                        ${
+                          index === 0
+                            ? 'text-emerald-700 bg-emerald-100'
+                            : index === 1
+                            ? 'text-sky-700 bg-sky-100'
+                            : 'text-violet-700 bg-violet-100'
+                        }
+                      `}
+                    >
+                      {hotel.priceRange}
+                    </span>
+
+                  </div>
+
+                  <div className="mt-6 flex items-baseline gap-2">
+
+                    <span className="text-3xl font-extrabold text-gray-900">
+                      ₹{hotel.pricePerNight}
+                    </span>
+
+                    <span className="text-sm text-gray-400">
+                      / night
+                    </span>
+
+                  </div>
+
+                  <div className="mt-7 flex items-center justify-between">
+
+                    <span
+                      className={`
+                        text-sm
+                        font-semibold
+                        text-gray-400
+                        transition-colors
+                        duration-300
+                        ${
+                          index === 0
+                            ? 'group-hover:text-emerald-600'
+                            : index === 1
+                            ? 'group-hover:text-sky-600'
+                            : 'group-hover:text-violet-600'
+                        }
+                      `}
+                    >
+                      View stay
+                    </span>
+
+                    <span
+                      className={`
+                        text-lg
+                        group-hover:translate-x-2
+                        transition-transform
+                        duration-300
+                        ${
+                          index === 0
+                            ? 'text-emerald-600'
+                            : index === 1
+                            ? 'text-sky-600'
+                            : 'text-violet-600'
+                        }
+                      `}
+                    >
+                      →
+                    </span>
+
+                  </div>
+
+                  <div
+                    className={`
+                      mt-6
+                      h-1.5
+                      w-12
+                      rounded-full
+                      group-hover:w-full
+                      transition-all
+                      duration-700
+                      ${
+                        index === 0
+                          ? 'bg-gradient-to-r from-emerald-400 to-green-500'
+                          : index === 1
+                          ? 'bg-gradient-to-r from-sky-400 to-blue-500'
+                          : 'bg-gradient-to-r from-violet-400 to-purple-500'
+                      }
+                    `}
+                  />
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
         </div>
 
-        {/* Hotel name */}
-        <h3
-          className={`
-            text-xl font-bold
-            text-gray-900
-            leading-snug
-            transition-colors duration-300
-            ${
-              index === 0
-                ? 'group-hover:text-emerald-600'
-                : index === 1
-                ? 'group-hover:text-sky-600'
-                : 'group-hover:text-violet-600'
-            }
-          `}
-        >
-          {hotel.name}
-        </h3>
-
-        {/* Price category */}
-        <div className="mt-4">
-
-          <span
-            className={`
-              inline-flex items-center
-              text-xs font-bold
-              px-3 py-1.5
-              rounded-full
-              ${
-                index === 0
-                  ? 'text-emerald-700 bg-emerald-100'
-                  : index === 1
-                  ? 'text-sky-700 bg-sky-100'
-                  : 'text-violet-700 bg-violet-100'
-              }
-            `}
-          >
-            {hotel.priceRange}
-          </span>
-
-        </div>
-
-        {/* Price */}
-        <div className="mt-6 flex items-baseline gap-2">
-
-          <span className="text-3xl font-extrabold text-gray-900">
-            ₹{hotel.pricePerNight}
-          </span>
-
-          <span className="text-sm text-gray-400">
-            / night
-          </span>
-
-        </div>
-
-        {/* Bottom interaction */}
-        <div className="mt-7 flex items-center justify-between">
-
-          <span
-            className={`
-              text-sm font-semibold
-              text-gray-400
-              transition-colors duration-300
-              ${
-                index === 0
-                  ? 'group-hover:text-emerald-600'
-                  : index === 1
-                  ? 'group-hover:text-sky-600'
-                  : 'group-hover:text-violet-600'
-              }
-            `}
-          >
-            View stay
-          </span>
-
-          <span
-            className={`
-              text-lg
-              group-hover:translate-x-2
-              transition-transform duration-300
-              ${
-                index === 0
-                  ? 'text-emerald-600'
-                  : index === 1
-                  ? 'text-sky-600'
-                  : 'text-violet-600'
-              }
-            `}
-          >
-            →
-          </span>
-
-        </div>
-
-        {/* Animated accent */}
-        <div
-          className={`
-            mt-6 h-1.5
-            w-12 rounded-full
-            group-hover:w-full
-            transition-all duration-700
-            ${
-              index === 0
-                ? 'bg-gradient-to-r from-emerald-400 to-green-500'
-                : index === 1
-                ? 'bg-gradient-to-r from-sky-400 to-blue-500'
-                : 'bg-gradient-to-r from-violet-400 to-purple-500'
-            }
-          `}
-        />
-
-      </div>
-
-    </div>
-
-  ))}
-
-</div>
-        </div>
-
-        {/* ================= TRAVEL INFORMATION ================= */}
+        {/* =====================================================
+            TRAVEL INFORMATION
+        ====================================================== */}
 
         <div className="mb-14">
 
-          {/* Section heading */}
           <div className="flex items-end justify-between mb-7">
 
             <div>
+
               <p className="text-sm font-semibold text-blue-600 uppercase tracking-widest">
                 Travel Guide
               </p>
@@ -728,6 +967,7 @@ function ItineraryPage() {
               <p className="text-gray-500 mt-2">
                 Everything you need to know before visiting {destination.name}
               </p>
+
             </div>
 
             <span className="hidden sm:block text-5xl">
@@ -736,18 +976,16 @@ function ItineraryPage() {
 
           </div>
 
-          {/* Information cards */}
           <div className="grid sm:grid-cols-3 gap-5">
 
             {/* Airport */}
+
             <div className="group relative overflow-hidden bg-gradient-to-br from-sky-50 via-white to-white rounded-3xl p-6 border border-sky-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
 
-              {/* Decorative circle */}
               <div className="absolute -top-12 -right-12 w-32 h-32 bg-sky-100 rounded-full group-hover:scale-125 transition-transform duration-500" />
 
               <div className="relative">
 
-                {/* Icon + badge */}
                 <div className="flex items-center justify-between mb-6">
 
                   <span className="text-4xl group-hover:scale-110 transition-transform duration-300">
@@ -778,18 +1016,16 @@ function ItineraryPage() {
                 <div className="mt-5 h-1 w-10 bg-sky-500 rounded-full group-hover:w-full transition-all duration-500" />
 
               </div>
-
             </div>
 
             {/* Railway */}
+
             <div className="group relative overflow-hidden bg-gradient-to-br from-violet-50 via-white to-white rounded-3xl p-6 border border-violet-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
 
-              {/* Decorative circle */}
               <div className="absolute -top-12 -right-12 w-32 h-32 bg-violet-100 rounded-full group-hover:scale-125 transition-transform duration-500" />
 
               <div className="relative">
 
-                {/* Icon + badge */}
                 <div className="flex items-center justify-between mb-6">
 
                   <span className="text-4xl group-hover:scale-110 transition-transform duration-300">
@@ -820,18 +1056,16 @@ function ItineraryPage() {
                 <div className="mt-5 h-1 w-10 bg-violet-500 rounded-full group-hover:w-full transition-all duration-500" />
 
               </div>
-
             </div>
 
             {/* Best Time */}
+
             <div className="group relative overflow-hidden bg-gradient-to-br from-amber-50 via-white to-white rounded-3xl p-6 border border-amber-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
 
-              {/* Decorative circle */}
               <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-100 rounded-full group-hover:scale-125 transition-transform duration-500" />
 
               <div className="relative">
 
-                {/* Icon + badge */}
                 <div className="flex items-center justify-between mb-6">
 
                   <span className="text-4xl group-hover:scale-110 transition-transform duration-300">
@@ -862,14 +1096,14 @@ function ItineraryPage() {
                 <div className="mt-5 h-1 w-10 bg-amber-500 rounded-full group-hover:w-full transition-all duration-500" />
 
               </div>
-
             </div>
 
           </div>
-
         </div>
 
-        {/* ================= FLOATING AI BUTTON ================= */}
+        {/* =====================================================
+            FLOATING AI BUTTON
+        ====================================================== */}
 
         <button
           onClick={() => {
@@ -886,7 +1120,9 @@ function ItineraryPage() {
           ✨ Plan with AI
         </button>
 
-        {/* ================= AI PLANNER ================= */}
+        {/* =====================================================
+            AI PLANNER
+        ====================================================== */}
 
         {showPlanner && (
 

@@ -936,6 +936,9 @@ March to June, or September for autumn colors.
 - Kahwa from valley-side tea stalls`,
   },
 
+
+  
+
 Mumbai: {
     'Gateway of India': `## History & Background
 Built in 1924 to commemorate the 1911 visit of King George V and Queen Mary, this Indo-Saracenic arch ironically became the exact spot where the last British troops ceremonially departed India in 1948.
@@ -1012,6 +1015,161 @@ Evening, when the facade is beautifully illuminated.
 - Vada pav from nearby stalls
 - Irani cafe chai and bun maska
 - Street-side pav bhaji`,
+  },
+
+
+Rishikesh: {
+    'Laxman Jhula': `## History & Background
+Legend holds that Lakshman, brother of Lord Rama, crossed the Ganges here on a rope of jute — the current iron suspension bridge, built in 1929, replaced the original rope crossing and has since become one of Rishikesh's defining landmarks.
+
+## Why Visit
+Swaying gently above the rushing Ganges, surrounded by temple bells and monkeys darting across the cables, crossing this bridge is a small adventure in itself and offers some of the best river views in town.
+
+## Best Time to Visit
+Early morning or just before sunset.
+
+## Nearby Attractions
+- Ram Jhula, a short walk along the river
+- Parmarth Niketan Ashram
+- Local riverside cafes
+
+## Local Food to Try
+- Fresh fruit lassi from nearby stalls
+- Aloo paratha at riverside dhabas
+- Herbal Himalayan tea`,
+
+    'Triveni Ghat': `## History & Background
+Believed to be the sacred confluence of the Ganges, Yamuna, and the mythical Saraswati rivers, Triveni Ghat has served as Rishikesh's principal bathing and cremation ghat for generations of pilgrims.
+
+## Why Visit
+The nightly Ganga Aarti here — hundreds of floating diyas drifting downriver as priests chant and swing flaming lamps — is one of the most moving spiritual sights in all of Rishikesh.
+
+## Best Time to Visit
+Evening, for the Aarti ceremony at sunset.
+
+## Nearby Attractions
+- Rishikesh main market, nearby
+- Bharat Mandir temple
+- Ram Jhula, a short walk away
+
+## Local Food to Try
+- Kachori sabzi from nearby stalls
+- Fresh sugarcane juice
+- Sattvic (pure vegetarian) thalis at ghat-side eateries`,
+
+    'Beatles Ashram': `## History & Background
+In 1968, The Beatles spent several transformative weeks at this Maharishi Mahesh Yogi ashram studying transcendental meditation — a stay that inspired much of the White Album and put Rishikesh on the global map.
+
+## Why Visit
+Wandering through crumbling meditation domes now covered in vivid graffiti and Beatles-inspired murals offers a genuinely unique mix of music history, abandoned architecture, and forest quiet.
+
+## Best Time to Visit
+Morning, when the light filters best through the surrounding trees.
+
+## Nearby Attractions
+- Ram Jhula, near the ashram entrance
+- Parmarth Niketan Ashram
+- Rishikesh forest trails
+
+## Local Food to Try
+- Café meals inspired by the ashram's global visitors
+- Herbal tea blends
+- Fresh fruit bowls from nearby cafes`,
+
+    'River Rafting on the Ganges': `## History & Background
+Rafting on the Ganges took off in Rishikesh through the 1990s as adventure tourism grew alongside its spiritual reputation, turning the stretch between Kaudiyala and Rishikesh into one of India's most popular white-water routes.
+
+## Why Visit
+Powering through rapids with names like "Roller Coaster" and "Golf Course," against a backdrop of forested Himalayan foothills, is an exhilarating contrast to Rishikesh's calmer, meditative side.
+
+## Best Time to Visit
+September to June (rafting typically pauses during peak monsoon).
+
+## Nearby Attractions
+- Kaudiyala, a common rafting starting point
+- Shivpuri, a midway camping and rafting hub
+- Laxman Jhula, near the finishing point
+
+## Local Food to Try
+- Post-raft maggi and pakoras at riverside camps
+- Grilled corn from camp vendors
+- Hot masala chai`,
+
+    'Ram Jhula': `## History & Background
+Built a few decades after its sister bridge Laxman Jhula, Ram Jhula connects Rishikesh's two major ashram districts, Swargashram and Muni Ki Reti, and quickly became a spiritual and commercial hub in its own right.
+
+## Why Visit
+Lined with ashrams, temples, and bustling shops selling malas and spiritual books, crossing Ram Jhula feels like walking through the living, breathing center of Rishikesh's ashram culture.
+
+## Best Time to Visit
+Late afternoon into evening, when the area is liveliest.
+
+## Nearby Attractions
+- Parmarth Niketan Ashram, right at one end
+- Swarg Ashram market
+- Triveni Ghat, a short walk downriver
+
+## Local Food to Try
+- German Bakery's famous baked goods
+- Fresh juice bars along the bridge approach
+- Sattvic thalis at ashram canteens`,
+
+    'Neelkanth Mahadev Temple': `## History & Background
+According to legend, this is where Lord Shiva swallowed poison churned from the cosmic ocean to save the universe, turning his throat blue ("Neelkanth") — a story that makes this forested hilltop temple one of the most sacred Shiva sites in the region.
+
+## Why Visit
+The winding drive or trek up through dense forest, ending at a temple wrapped in incense smoke and devotional chanting, makes Neelkanth feel wonderfully remote compared to Rishikesh's busier ghats.
+
+## Best Time to Visit
+Morning, to enjoy the forest trail before the day heats up.
+
+## Nearby Attractions
+- Rishikesh town, about 32km away
+- Surrounding forest trekking trails
+- Local waterfalls along the route
+
+## Local Food to Try
+- Simple vegetarian meals at temple food stalls
+- Fresh mountain spring water
+- Roasted chana from trailside vendors`,
+
+    'Parmarth Niketan Ashram': `## History & Background
+Founded in 1942, Parmarth Niketan has grown into one of Rishikesh's largest and most renowned ashrams, hosting the International Yoga Festival and welcoming spiritual seekers from around the world.
+
+## Why Visit
+Joining the nightly Ganga Aarti on its riverside courtyard — hundreds of voices chanting in unison as the sun sets over the Ganges — is one of the most soul-stirring communal experiences Rishikesh offers.
+
+## Best Time to Visit
+Evening, for the Ganga Aarti ceremony.
+
+## Nearby Attractions
+- Ram Jhula, right outside the ashram
+- Triveni Ghat, a short walk along the river
+- Swarg Ashram market
+
+## Local Food to Try
+- Ashram-served sattvic meals
+- Herbal Ayurvedic teas
+- Fresh fruit offered during the Aarti`,
+
+    'Kaudiyala': `## History & Background
+Once a quiet riverside village, Kaudiyala became the starting point for the Ganges' most thrilling rafting stretch as adventure tourism grew in the region from the 1990s onward, now dotted with seasonal riverside camps.
+
+## Why Visit
+Beyond being the launch point for grade III-IV rapids, its riverside campsites under starlit Himalayan skies make Kaudiyala a favorite for overnight adventure trips away from Rishikesh's crowds.
+
+## Best Time to Visit
+September to June, for rafting and camping season.
+
+## Nearby Attractions
+- Rishikesh, about 35km downstream
+- Shivpuri, a popular midway camping spot
+- Surrounding riverside forest trails
+
+## Local Food to Try
+- Campfire-cooked dal and rice
+- Hot maggi at riverside camps
+- Fresh grilled corn`,
   },
 
   'Andaman Islands': {
