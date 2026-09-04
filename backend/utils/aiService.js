@@ -1,5 +1,22 @@
 const { GoogleGenAI } = require('@google/genai');
 
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const callGeminiWithRetry = async (ai, params, retries = 3) => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await ai.models.generateContent(params);
+    } catch (error) {
+      const isOverloaded = error.message?.includes('UNAVAILABLE') || error.message?.includes('503');
+      if (isOverloaded && attempt < retries) {
+        await wait(attempt * 2000);
+        continue;
+      }
+      throw error;
+    }
+  }
+};
+
 const generateItinerary = async (destination, weather, days, people, budget) => {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -21,12 +38,45 @@ Destination info to use:
 Write a friendly, practical day-by-day plan. For each day, suggest which attractions to visit and roughly when. Recommend one hotel that best fits the given budget. Keep it concise and realistic given the trip duration.
 `;
 
-  const response = await ai.models.generateContent({
-  model: 'gemini-3.6-flash', 
-  contents: prompt,
-});
+  const response = await callGeminiWithRetry(ai, {
+    model: 'gemini-3.1-flash-lite',
+    contents: prompt,
+  });
 
   return response.text;
 };
 
-module.exports = { generateItinerary };
+const generateAttractionInfo = async (attractionName, destinationName) => {
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+  const prompt = `
+You are a knowledgeable local travel guide with a good travel experience. Write an engaging overview of "${attractionName}", located in ${destinationName}, India.
+
+Structure your response with these markdown headings:
+## History & Background
+A short, interesting history (2-3 sentences).
+
+## Why Visit
+What makes it worth seeing today (2-3 sentences).
+
+## Best Time to Visit
+One short line.
+
+## Nearby Attractions
+2-3 other famous places worth visiting nearby (bullet list, just names with a few words each).
+
+## Local Food to Try
+2-3 famous local dishes or food spots nearby (bullet list).
+
+Keep the tone friendly and concise. Do not exceed 250 words total.
+`;
+
+  const response = await callGeminiWithRetry(ai, {
+    model: 'gemini-3.1-flash-lite',
+    contents: prompt,
+  });
+
+  return response.text;
+};
+
+module.exports = { generateItinerary, generateAttractionInfo };

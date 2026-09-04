@@ -128,8 +128,8 @@ function ItineraryPage() {
       setAiItinerary(response.data.itinerary);
     } catch (error) {
       setAiItinerary(
-        'Something went wrong generating your itinerary. Please try again.'
-      );
+        "Our AI planner is experiencing high demand right now. Please wait a moment and click 'Generate Itinerary' again."
+      );  
     } finally {
       setGenerating(false);
     }
