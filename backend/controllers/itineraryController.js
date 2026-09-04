@@ -33,9 +33,14 @@ const createItinerary = async (req, res) => {
       itinerary: itineraryText,
     });
   } 
-  catch (error) {
-    res.status(500).json({ message: 'Something went wrong', error: error.message });
-  }
+ catch (error) {
+  console.error('Itinerary generation error:', error);
+
+  res.status(500).json({
+    message: 'Something went wrong',
+    error: error.message,
+  });
+}
 };
 
 module.exports = { createItinerary };
