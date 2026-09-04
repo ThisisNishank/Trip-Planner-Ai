@@ -1,4 +1,4 @@
-<!-- # 🧳 AI Travel Planner
+# 🧳 AI Travel Planner
 
 A full-stack MERN application that helps travelers explore India's most iconic destinations and get a personalized, AI-generated itinerary in seconds — built from scratch, end to end, including authentication, a live weather integration, and a Gemini-powered planning engine.
 
@@ -6,7 +6,7 @@ A full-stack MERN application that helps travelers explore India's most iconic d
 **⚙️ Live API:** [trip-planner-ai-2e2b.onrender.com](https://trip-planner-ai-2e2b.onrender.com)
 
 ---
-<!--  -->
+
 ## 💡 The idea
 
 Planning a trip usually means fifteen browser tabs open at once — one for hotels, one for weather, one for "top things to do," another for figuring out how to actually get there. AI Travel Planner puts all of that in one place: pick a destination, tell it your budget, your group size, and how many days you have, and it builds a complete, practical itinerary around real data — not a generic template.
@@ -92,4 +92,4 @@ VITE_API_URL=http://localhost:5000/api
 
 ## 👋 About this project
 
-Built as a hands-on way to learn the full MERN stack properly — not just tutorials, but a genuinely working, deployed product with real authentication, a real database, real third-party API integrations, and real deployment. Every feature here was built, debugged, and shipped from scratch. -->
+Built as a hands-on way to learn the full MERN stack properly — not just tutorials, but a genuinely working, deployed product with real authentication, a real database, real third-party API integrations, and real deployment. Every feature here was built, debugged, and shipped from scratch.
