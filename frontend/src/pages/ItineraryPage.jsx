@@ -4,6 +4,8 @@ import axios from 'axios';
 import api from '../api/axios';
 import ReactMarkdown from 'react-markdown';
 import { getImageSearchTerm } from '../utils/destinationImageQueries';
+import TripPlannerModal from '../components/TripPlannerModal';
+
 
 function ItineraryPage() {
   const [searchParams] = useSearchParams();
@@ -42,9 +44,7 @@ function ItineraryPage() {
   // ================= AI PLANNER =================
 
   const [showPlanner, setShowPlanner] = useState(false);
-  const [days, setDays] = useState('');
-  const [people, setPeople] = useState('');
-  const [budget, setBudget] = useState('');
+
   const [aiItinerary, setAiItinerary] = useState('');
   const [generating, setGenerating] = useState(false);
 
@@ -101,9 +101,7 @@ function ItineraryPage() {
 
   // ================= GENERATE ITINERARY =================
 
-  const handleGenerateItinerary = async (e) => {
-    e.preventDefault();
-
+    const handleGenerateItinerary = async (days, people, budget) => {
     setGenerating(true);
     setAiItinerary('');
 
@@ -112,24 +110,12 @@ function ItineraryPage() {
     try {
       const response = await api.post(
         '/itinerary',
-        {
-          destinationName,
-          days,
-          people,
-          budget,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { destinationName, days, people, budget },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setAiItinerary(response.data.itinerary);
     } catch (error) {
-      setAiItinerary(
-        "Our AI planner is experiencing high demand right now. Please wait a moment and click 'Generate Itinerary' again."
-      );  
+      setAiItinerary("Our AI planner is experiencing high demand right now. Please wait a moment and click 'Generate Itinerary' again.");
     } finally {
       setGenerating(false);
     }
@@ -1124,99 +1110,33 @@ function ItineraryPage() {
             AI PLANNER
         ====================================================== */}
 
-        {showPlanner && (
+                {showPlanner && !aiItinerary && (
+          <TripPlannerModal
+            destinationName={destination.name}
+            heroImage={heroImage}
+            onClose={() => setShowPlanner(false)}
+            onGenerate={handleGenerateItinerary}
+            generating={generating}
+          />
+        )}
 
+        {showPlanner && aiItinerary && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 z-50">
-
             <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-2xl max-h-[88vh] overflow-y-auto">
-
               <div className="flex justify-between items-center mb-6">
-
-                <h2 className="text-2xl font-bold text-gray-800">
-                  ✨ Your AI Trip Plan
-                </h2>
-
+                <h2 className="text-2xl font-bold text-gray-800">Your AI trip plan</h2>
                 <button
                   onClick={() => setShowPlanner(false)}
                   className="text-gray-400 hover:text-gray-700 transition"
                 >
                   ✕
                 </button>
-
               </div>
-
-              {!aiItinerary && (
-
-                <form onSubmit={handleGenerateItinerary}>
-
-                  <label className="block text-sm text-gray-600 mb-1">
-                    Number of days
-                  </label>
-
-                  <input
-                    type="number"
-                    value={days}
-                    onChange={(e) => setDays(e.target.value)}
-                    required
-                    min="1"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                  />
-
-                  <label className="block text-sm text-gray-600 mb-1">
-                    Number of people
-                  </label>
-
-                  <input
-                    type="number"
-                    value={people}
-                    onChange={(e) => setPeople(e.target.value)}
-                    required
-                    min="1"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                  />
-
-                  <label className="block text-sm text-gray-600 mb-1">
-                    Total budget (₹)
-                  </label>
-
-                  <input
-                    type="number"
-                    value={budget}
-                    onChange={(e) => setBudget(e.target.value)}
-                    required
-                    min="1"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-5 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                  />
-
-                  <button
-                    type="submit"
-                    disabled={generating}
-                    className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50"
-                  >
-                    {generating
-                      ? 'Generating your plan...'
-                      : 'Generate Itinerary'}
-                  </button>
-
-                </form>
-
-              )}
-
-              {aiItinerary && (
-
-                <div className="prose prose-sm sm:prose-base prose-headings:text-blue-700 prose-strong:text-gray-800 max-w-none">
-
-                  <ReactMarkdown>
-                    {aiItinerary}
-                  </ReactMarkdown>
-
-                </div>
-
-              )}
-
+              <div className="prose prose-sm sm:prose-base prose-headings:text-blue-700 prose-strong:text-gray-800 max-w-none">
+                <ReactMarkdown>{aiItinerary}</ReactMarkdown>
+              </div>
             </div>
           </div>
-
         )}
 
       </div>
