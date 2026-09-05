@@ -21,6 +21,16 @@ function Stepper({ icon, iconBg, iconColor, glowColor, label, value, onChange, s
     e.currentTarget.style.boxShadow = 'none';
   };
 
+  const handleDecrease = () => {
+    const current = value === '' ? step : Number(value);
+    onChange(Math.max(1, current - step));
+  };
+
+  const handleIncrease = () => {
+    const current = value === '' ? 0 : Number(value);
+    onChange(current + step);
+  };
+
   return (
     <div
       className="flex items-center gap-3.5 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 transition-all duration-200 cursor-pointer"
@@ -37,21 +47,38 @@ function Stepper({ icon, iconBg, iconColor, glowColor, label, value, onChange, s
       </div>
       <div className="flex-1">
         <p className="text-xs text-gray-400 mb-0.5">{label}</p>
-        <p className="text-[15px] font-medium text-gray-800">
-          {prefix}{value.toLocaleString()}
-        </p>
+        <div className="flex items-center gap-0.5">
+          {prefix && <span className="text-[15px] font-medium text-gray-800">{prefix}</span>}
+          <input
+            type="number"
+            value={value}
+            placeholder="0"
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === '') {
+                onChange('');
+                return;
+              }
+              const num = Number(val);
+              onChange(num < 1 ? 1 : num);
+            }}
+            onClick={(e) => e.stopPropagation()}
+            min="1"
+            className="text-[15px] font-medium text-gray-800 bg-transparent border-none outline-none w-full placeholder:text-gray-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          />
+        </div>
       </div>
       <div className="flex items-center gap-2">
         <button
           type="button"
-          onClick={() => onChange(Math.max(1, value - step))}
+          onClick={handleDecrease}
           className="w-9 h-9 rounded-lg border-2 border-gray-200 bg-white text-gray-600 text-lg font-semibold flex items-center justify-center hover:bg-gray-100 hover:border-gray-300 active:scale-90 transition-all"
         >
           −
         </button>
         <button
           type="button"
-          onClick={() => onChange(value + step)}
+          onClick={handleIncrease}
           className="w-9 h-9 rounded-lg border-2 border-gray-200 bg-white text-gray-600 text-lg font-semibold flex items-center justify-center hover:bg-gray-100 hover:border-gray-300 active:scale-90 transition-all"
         >
           +
@@ -60,12 +87,11 @@ function Stepper({ icon, iconBg, iconColor, glowColor, label, value, onChange, s
     </div>
   );
 }
-
 function TripPlannerModal({ destinationName, heroImage, onClose, onGenerate, generating }) {
   const [quote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
-  const [days, setDays] = useState(4);
-  const [people, setPeople] = useState(2);
-  const [budget, setBudget] = useState(25000);
+  const [days, setDays] = useState('');
+  const [people, setPeople] = useState('');
+  const [budget, setBudget] = useState('');
 
   return (
     <div
@@ -136,9 +162,9 @@ function TripPlannerModal({ destinationName, heroImage, onClose, onGenerate, gen
             />
           </div>
 
-          <button
+            <button
             onClick={() => onGenerate(days, people, budget)}
-            disabled={generating}
+            disabled={generating || !days || !people || !budget}
             className="w-full mt-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-full h-[46px] text-[15px] font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 disabled:opacity-50"
           >
             {generating ? 'Generating your plan...' : (
