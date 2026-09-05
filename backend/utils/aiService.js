@@ -2,16 +2,25 @@ const { GoogleGenAI } = require('@google/genai');
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const callGeminiWithRetry = async (ai, params, retries = 3) => {
+const callGeminiWithRetry = async (ai, params, retries = 2) => {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       return await ai.models.generateContent(params);
     } catch (error) {
-      const isOverloaded = error.message?.includes('UNAVAILABLE') || error.message?.includes('503');
+      const message = error.message || '';
+      const isQuotaExhausted = message.includes('429') || message.includes('RESOURCE_EXHAUSTED') || message.includes('quota');
+      const isOverloaded = message.includes('503') || message.includes('UNAVAILABLE');
+
+      if (isQuotaExhausted) {
+        error.isQuotaExhausted = true;
+        throw error; // never retry — it will fail the same way and waste quota
+      }
+
       if (isOverloaded && attempt < retries) {
-        await wait(attempt * 2000);
+        await wait(attempt * 2500);
         continue;
       }
+
       throw error;
     }
   }

@@ -114,8 +114,12 @@ function ItineraryPage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setAiItinerary(response.data.itinerary);
-    } catch (error) {
-      setAiItinerary("Our AI planner is experiencing high demand right now. Please wait a moment and click 'Generate Itinerary' again.");
+       } catch (error) {
+      const backendMessage = error.response?.data?.message;
+      setAiItinerary(
+        backendMessage ||
+        "Our AI planner is experiencing high demand right now. Please wait a moment and click 'Generate Itinerary' again."
+      );
     } finally {
       setGenerating(false);
     }

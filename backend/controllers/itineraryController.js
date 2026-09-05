@@ -33,8 +33,15 @@ const createItinerary = async (req, res) => {
       itinerary: itineraryText,
     });
   } 
- catch (error) {
+catch (error) {
   console.error('Itinerary generation error:', error);
+
+  if (error.isQuotaExhausted) {
+    return res.status(429).json({
+      message: 'Our AI planner has reached its daily limit. Please try again tomorrow.',
+      error: error.message,
+    });
+  }
 
   res.status(500).json({
     message: 'Something went wrong',
