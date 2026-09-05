@@ -453,7 +453,7 @@ function HomePage() {
 
       <div>
         <h2 className="flex items-center gap-3 text-3xl font-extrabold text-[#07184a]">
-          <span className="text-4xl">🧭</span>
+          <span className="text-4xl"></span>
           Explore India
         </h2>
 

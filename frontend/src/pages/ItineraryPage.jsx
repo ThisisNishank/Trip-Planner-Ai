@@ -671,7 +671,7 @@ function ItineraryPage() {
               </h2>
 
               <p className="text-gray-500 mt-2">
-                Comfortable stays for every type of traveler
+                From budget-friendly gems to luxury stays
               </p>
 
             </div>

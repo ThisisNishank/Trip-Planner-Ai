@@ -9,18 +9,25 @@ const quotes = [
 ];
 
 function Stepper({ icon, iconBg, iconColor, glowColor, label, value, onChange, step, prefix }) {
+  const applyGlow = (e, intensity) => {
+    e.currentTarget.style.background = iconBg;
+    e.currentTarget.style.borderColor = iconColor;
+    e.currentTarget.style.boxShadow = `0 0 0 2px ${iconColor}, 0 0 ${intensity}px ${intensity / 2}px ${glowColor}`;
+  };
+
+  const removeGlow = (e) => {
+    e.currentTarget.style.background = '';
+    e.currentTarget.style.borderColor = '#f3f4f6';
+    e.currentTarget.style.boxShadow = 'none';
+  };
+
   return (
     <div
-      className="flex items-center gap-3.5 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 transition-all duration-200"
-      style={{ '--glow': glowColor }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = `0 0 0 3px ${glowColor}`;
-        e.currentTarget.style.borderColor = iconColor;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = 'none';
-        e.currentTarget.style.borderColor = '#f3f4f6';
-      }}
+      className="flex items-center gap-3.5 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 transition-all duration-200 cursor-pointer"
+      onMouseEnter={(e) => applyGlow(e, 22)}
+      onMouseLeave={removeGlow}
+      onMouseDown={(e) => applyGlow(e, 34)}
+      onMouseUp={(e) => applyGlow(e, 22)}
     >
       <div
         className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -38,14 +45,14 @@ function Stepper({ icon, iconBg, iconColor, glowColor, label, value, onChange, s
         <button
           type="button"
           onClick={() => onChange(Math.max(1, value - step))}
-          className="w-6.5 h-6.5 rounded-lg border border-gray-200 bg-white text-gray-500 text-sm hover:bg-gray-100 transition"
+          className="w-9 h-9 rounded-lg border-2 border-gray-200 bg-white text-gray-600 text-lg font-semibold flex items-center justify-center hover:bg-gray-100 hover:border-gray-300 active:scale-90 transition-all"
         >
           −
         </button>
         <button
           type="button"
           onClick={() => onChange(value + step)}
-          className="w-6.5 h-6.5 rounded-lg border border-gray-200 bg-white text-gray-500 text-sm hover:bg-gray-100 transition"
+          className="w-9 h-9 rounded-lg border-2 border-gray-200 bg-white text-gray-600 text-lg font-semibold flex items-center justify-center hover:bg-gray-100 hover:border-gray-300 active:scale-90 transition-all"
         >
           +
         </button>
